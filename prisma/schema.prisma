@@ -1,7 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// SCIC/EJP-13 Backend — Prisma schema
 
 generator client {
   provider = "prisma-client"
@@ -12,41 +9,140 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id       String   @id @default(uuid())
-  name     String
-  email    String   @unique
-  password String
-  role     UserRole @default(User)
-  orders   Orders[]
-
-  @@map("users")
-}
-
 enum UserRole {
   User
   Admin
-  Manager
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  password      String?
+  image         String?
+  role          UserRole  @default(User)
+  isDeleted     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt @default(now())
+
+  reviews Review[]
+  orders  Order[]
+  accounts Account[]
+  sessions Session[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model Account {
+  id         String   @id @default(uuid())
+  accountId  String
+  providerId String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  password   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt @default(now())
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Category {
+  id          String        @id @default(uuid())
+  name        String
+  slug        String        @unique
+  description String?
+  status      ProductStatus @default(ACTIVE)
+  isDeleted   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt @default(now())
+
+  products Product[]
+
+  @@index([status])
+  @@map("categories")
 }
 
 model Product {
-  id          String  @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   description String?
   price       Int
   stock       Int
+  image       String?
+  categoryId  String?
+  category    Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status      ProductStatus @default(ACTIVE)
+  isDeleted   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt @default(now())
 
+  reviews Review[]
+
+  @@index([categoryId])
+  @@index([status])
   @@map("products")
 }
 
-model Orders {
-  id     String @id @default(uuid())
-  userId String
-  // user   User   @relation(fields: [userId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  @@index([userId])
+  @@index([productId])
+  @@map("reviews")
 }
 
-model Newproducts {
-  id String @id @default(uuid())
-  name String
+model Order {
+  id        String      @id @default(uuid())
+  total     Int
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    OrderStatus @default(PENDING)
+  isDeleted Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
 }

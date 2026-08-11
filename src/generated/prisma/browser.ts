@@ -13,22 +13,42 @@
  * 🟢 You can import this file directly.
  */
 
-import * as Prisma from './internal/prismaNamespaceBrowser'
+import * as Prisma from './internal/prismaNamespaceBrowser.js'
 export { Prisma }
-export * as $Enums from './enums'
-export * from './enums';
+export * as $Enums from './enums.js'
+export * from './enums.js';
 /**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
 /**
+ * Model Account
+ * 
+ */
+export type Account = Prisma.AccountModel
+/**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
  * Model Product
  * 
  */
 export type Product = Prisma.ProductModel
 /**
- * Model Orders
+ * Model Review
  * 
  */
-export type Orders = Prisma.OrdersModel
+export type Review = Prisma.ReviewModel
+/**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel

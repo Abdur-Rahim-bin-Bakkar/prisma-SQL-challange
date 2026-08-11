@@ -1,19 +1,23 @@
-import express from "express"
-import dotenv from "dotenv"
-import cors from 'cors'
-import router from "./lib/services/product"
-const app = express()
-dotenv.config()
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import routes from "./routes";
+import { errorHandler, notFound } from "./middleware/error";
 
-app.use(express.json())
-// app.use(cors())
+dotenv.config();
 
-app.get('/', (req, res)=>{
-    res.json({success:true, mesage:"welcome"})
-})
+const app = express();
 
-app.use('/product', router)
+app.use(cors());
+app.use(express.json());
 
+app.get("/", (_req, res) => {
+  res.json({ success: true, message: "EJP-13 Shop API", data: null });
+});
 
-export default app
+app.use("/api", routes);
 
+app.use(notFound);
+app.use(errorHandler);
+
+export default app;
