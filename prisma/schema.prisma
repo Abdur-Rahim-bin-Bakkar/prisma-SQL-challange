@@ -44,6 +44,7 @@ model User {
   orders  Order[]
   accounts Account[]
   sessions Session[]
+  cartItems Cart[]
 
   @@index([role])
   @@map("users")
@@ -109,6 +110,7 @@ model Product {
   updatedAt   DateTime      @updatedAt @default(now())
 
   reviews Review[]
+  cartItems Cart[]
 
   @@index([categoryId])
   @@index([status])
@@ -145,4 +147,20 @@ model Order {
   @@index([userId])
   @@index([status])
   @@map("orders")
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@map("carts")
 }

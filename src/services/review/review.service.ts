@@ -3,7 +3,10 @@ import { AppError } from "../../lib/app-error";
 import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory";
 
 const reviewCrud = createCrudService(prisma.review as unknown as PrismaDelegate, {
-  include: { user: true, product: true },
+  include: {
+    user: { select: { id: true, name: true, email: true, image: true, role: true } },
+    product: { select: { id: true, title: true, image: true, price: true } },
+  },
   orderBy: { createdAt: "desc" },
 });
 
