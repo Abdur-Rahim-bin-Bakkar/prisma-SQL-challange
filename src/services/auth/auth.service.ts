@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import { randomBytes, scryptSync } from "node:crypto";
-import prisma from "../../lib/prisma";
-import { AppError } from "../../lib/app-error";
-import { signToken } from "../../lib/jwt";
+import prisma from "../../lib/prisma.js";
+import { AppError } from "../../lib/app-error.js";
+import { signToken } from "../../lib/jwt.js";
 
 const SCRYPT_CONFIG = { N: 16384, r: 16, p: 1, dkLen: 64 };
 

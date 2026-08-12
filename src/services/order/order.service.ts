@@ -1,9 +1,11 @@
-import prisma from "../../lib/prisma";
-import { AppError } from "../../lib/app-error";
-import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory";
+import prisma from "../../lib/prisma.js";
+import { AppError } from "../../lib/app-error.js";
+import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory.js";
 
 const orderCrud = createCrudService(prisma.order as unknown as PrismaDelegate, {
-  include: { user: true },
+  include: {
+    user: { select: { id: true, name: true, email: true, image: true, role: true } },
+  },
   orderBy: { createdAt: "desc" },
 });
 
@@ -26,7 +28,9 @@ export async function createOrder(userId: string, data: Record<string, unknown>)
 
 export async function getOrders(userId: string, role: string, query: { page?: number; limit?: number; search?: string }) {
   const crud = createCrudService(prisma.order as unknown as PrismaDelegate, {
-    include: { user: true },
+    include: {
+      user: { select: { id: true, name: true, email: true, image: true, role: true } },
+    },
     orderBy: { createdAt: "desc" },
     filter: role === "Admin" ? undefined : () => ({ userId }),
   });

@@ -1,7 +1,7 @@
-import prisma from "../../lib/prisma";
-import { AppError } from "../../lib/app-error";
-import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory";
-import { slugify } from "../../lib/slugify";
+import prisma from "../../lib/prisma.js";
+import { AppError } from "../../lib/app-error.js";
+import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory.js";
+import { slugify } from "../../lib/slugify.js";
 
 const categoryCrud = createCrudService(prisma.category as unknown as PrismaDelegate, {
   searchableFields: ["name", "slug"],

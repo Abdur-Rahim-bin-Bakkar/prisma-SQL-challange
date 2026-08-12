@@ -1,14 +1,19 @@
-import prisma from "../../lib/prisma";
+import prisma from "../../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import { randomBytes, scryptSync } from "node:crypto";
-import { AppError } from "../../lib/app-error";
-import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory";
+import { AppError } from "../../lib/app-error.js";
+import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory.js";
 
 const userCrud = createCrudService(prisma.user as unknown as PrismaDelegate, {
   searchableFields: ["name", "email"],
-  include: { orders: true, reviews: true },
+  include: { _count: { select: { orders: true, reviews: true } } },
   orderBy: { createdAt: "desc" },
 });
+
+function omitPassword<T extends { password?: string | null }>(user: T) {
+  const { password: _password, ...rest } = user;
+  return rest;
+}
 
 const UPDATABLE_FIELDS = ["name", "email", "image"];
 
@@ -32,7 +37,7 @@ export async function createUser(data: Record<string, unknown>) {
     throw new AppError(409, "A user with this email already exists.");
   }
   const hashed = await bcrypt.hash(String(data.password), 10);
-  const user = (await userCrud.create({ name: data.name, email: data.email, password: hashed, image: data.image, role: data.role })) as { id: string };
+  const user = (await userCrud.create({ name: data.name, email: data.email, password: hashed, image: data.image, role: data.role })) as { id: string; password?: string | null };
   await prisma.account.create({
     data: {
       accountId: user.id,
@@ -41,11 +46,12 @@ export async function createUser(data: Record<string, unknown>) {
       password: scryptHash(String(data.password)),
     },
   });
-  return user;
+  return omitPassword(user);
 }
 
 export async function getUsers(query: { page?: number; limit?: number; search?: string }) {
-  return userCrud.getAll(query);
+  const result = await userCrud.getAll(query);
+  return { ...result, items: result.items.map(omitPassword) };
 }
 
 export async function getUserById(id: string) {
@@ -53,8 +59,7 @@ export async function getUserById(id: string) {
   if (!user) {
     throw new AppError(404, "User not found.");
   }
-  const { password: _password, ...rest } = user;
-  return rest;
+  return omitPassword(user);
 }
 
 export async function updateUser(id: string, data: Record<string, unknown>) {

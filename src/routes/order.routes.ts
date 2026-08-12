@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { catchAsync } from "../lib/catch-async";
-import { sendCreated, sendDeleted, sendSuccess } from "../lib/response";
-import { protect } from "../middleware/auth";
-import * as orderService from "../services/order/order.service";
+import { catchAsync } from "../lib/catch-async.js";
+import { sendCreated, sendDeleted, sendSuccess } from "../lib/response.js";
+import { protect } from "../middleware/auth.js";
+import * as orderService from "../services/order/order.service.js";
 
 const router = Router();
 

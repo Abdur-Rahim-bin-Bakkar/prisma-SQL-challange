@@ -1,5 +1,5 @@
-import prisma from "../../lib/prisma";
-import { AppError } from "../../lib/app-error";
+import prisma from "../../lib/prisma.js";
+import { AppError } from "../../lib/app-error.js";
 
 const CART_INCLUDE = {
   product: {

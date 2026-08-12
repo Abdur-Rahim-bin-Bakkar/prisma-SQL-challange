@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { catchAsync } from "../lib/catch-async";
-import { sendCreated, sendDeleted, sendSuccess } from "../lib/response";
-import { protect, restrictTo } from "../middleware/auth";
-import * as productService from "../services/product/product.service";
+import { catchAsync } from "../lib/catch-async.js";
+import { sendCreated, sendDeleted, sendSuccess } from "../lib/response.js";
+import { protect, restrictTo } from "../middleware/auth.js";
+import * as productService from "../services/product/product.service.js";
 
 const router = Router();
 

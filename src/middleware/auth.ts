@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import prisma from "../lib/prisma";
-import { verifyToken } from "../lib/jwt";
-import { AppError } from "../lib/app-error";
+import prisma from "../lib/prisma.js";
+import { verifyToken } from "../lib/jwt.js";
+import { AppError } from "../lib/app-error.js";
 
 export async function protect(req: Request, _res: Response, next: NextFunction) {
   const header = req.headers.authorization;

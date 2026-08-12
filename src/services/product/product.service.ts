@@ -1,6 +1,6 @@
-import prisma from "../../lib/prisma";
-import { AppError } from "../../lib/app-error";
-import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory";
+import prisma from "../../lib/prisma.js";
+import { AppError } from "../../lib/app-error.js";
+import { createCrudService, pick, type PrismaDelegate } from "../../lib/crud-factory.js";
 
 const productCrud = createCrudService(prisma.product as unknown as PrismaDelegate, {
   searchableFields: ["title", "description"],
